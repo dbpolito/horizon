@@ -34,4 +34,22 @@ class LuaScripts
             redis.call('hmset', KEYS[1], 'throughput', throughput, 'runtime', runtime)
 LUA;
     }
+
+    /**
+     * Flush the given list and return its members.
+     *
+     * KEYS[1] - The name of the list
+     *
+     * @return string
+     */
+    public static function flushList()
+    {
+        return <<<'LUA'
+            local all = redis.call('lrange', KEYS[1], 0, -1)
+            
+            redis.call('ltrim', KEYS[1], redis.call('llen', KEYS[1]), -1)
+            
+            return all
+LUA;
+    }
 }
